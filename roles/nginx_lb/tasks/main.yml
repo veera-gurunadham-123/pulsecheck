@@ -5,6 +5,16 @@
     state: present
     update_cache: true
 
+- name: Generate a self-signed TLS certificate (idempotent - skips if already present)
+  ansible.builtin.command:
+    cmd: >
+      openssl req -x509 -nodes -days 365
+      -newkey rsa:2048
+      -keyout /etc/nginx/pulsecheck-selfsigned.key
+      -out /etc/nginx/pulsecheck-selfsigned.crt
+      -subj "/CN=pulsecheck.local"
+    creates: /etc/nginx/pulsecheck-selfsigned.crt
+
 - name: Remove the default site so it can't conflict with ours
   file:
     path: /etc/nginx/sites-enabled/default

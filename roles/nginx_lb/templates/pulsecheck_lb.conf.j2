@@ -1,11 +1,15 @@
 upstream pulsecheck_app {
 {% for host in groups['app'] %}
-    server {{ hostvars[host]['ansible_host'] }}:{{ app_port }};
+    server {{ hostvars[host]['ansible_host'] }}:{{ app_port }} max_fails=2 fail_timeout=5s;
 {% endfor %}
 }
 
 server {
     listen {{ lb_listen_port }};
+    listen 443 ssl;
+
+    ssl_certificate /etc/nginx/pulsecheck-selfsigned.crt;
+    ssl_certificate_key /etc/nginx/pulsecheck-selfsigned.key;
 
     location / {
         proxy_pass http://pulsecheck_app;
