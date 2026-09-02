@@ -1,5 +1,6 @@
 services:
   lb:
+    privileged: true
     build:
       context: .
       dockerfile: Dockerfile.node
@@ -13,6 +14,7 @@ services:
     restart: unless-stopped
 
   app1:
+    privileged: true
     build:
       context: .
       dockerfile: Dockerfile.node
@@ -26,6 +28,7 @@ services:
     restart: unless-stopped
 
   app2:
+    privileged: true
     build:
       context: .
       dockerfile: Dockerfile.node
@@ -39,6 +42,7 @@ services:
     restart: unless-stopped
 
   db:
+    privileged: true
     build:
       context: .
       dockerfile: Dockerfile.node

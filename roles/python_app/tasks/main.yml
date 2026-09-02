@@ -42,3 +42,9 @@
   notify: 
     - restart pulsecheck app
 
+- name: Ensure the service is enabled and started
+  ansible.builtin.systemd:
+    name: "{{ app_service_name }}"
+    state: started
+    enabled: true
+    daemon_reload: true
