@@ -1,0 +1,6 @@
+---
+- name: Deploy load balancer tier only
+  hosts: lb
+  become: true
+  roles:
+    - nginx_lb

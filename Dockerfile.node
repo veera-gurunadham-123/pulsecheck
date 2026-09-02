@@ -1,0 +1,13 @@
+FROM ubuntu:24.04
+
+RUN apt update && \
+    apt install -y openssh-server sudo python3 iproute2 && \
+    mkdir /var/run/sshd && \
+    useradd -m -s /bin/bash devops && \
+    echo "devops:devops" | chpasswd && \
+    usermod -aG sudo devops && \
+    echo "devops ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]

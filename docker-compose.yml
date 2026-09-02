@@ -1,0 +1,52 @@
+services:
+  lb:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    hostname: lb
+    networks:
+      - pulsecheck-net
+    labels:
+      - "project=pulsecheck"
+      - "role=lb"
+    restart: unless-stopped
+
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    hostname: app1
+    networks:
+      - pulsecheck-net
+    labels:
+      - "project=pulsecheck"
+      - "role=app"
+    restart: unless-stopped
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    hostname: app2
+    networks:
+      - pulsecheck-net
+    labels:
+      - "project=pulsecheck"
+      - "role=app"
+    restart: unless-stopped
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    hostname: db
+    networks:
+      - pulsecheck-net
+    labels:
+      - "project=pulsecheck"
+      - "role=db"
+    restart: unless-stopped
+
+networks:
+  pulsecheck-net:
+    driver: bridge

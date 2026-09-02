@@ -1,0 +1,77 @@
+#SPDX-License-Identifier: MIT-0
+
+# tasks file for postgres_db
+#
+---
+- name: Install PostgreSQL and its Python driver
+  apt:
+    name:
+      - postgresql
+      - python3-psycopg2
+    state: present
+    update_cache: true
+
+- name: Ensure PostgreSQL is running and enabled
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Find the actual postgresql.conf path (works regardless of installed version)
+  find:
+    paths: /etc/postgresql
+    patterns: postgresql.conf
+    recurse: true
+  register: pg_conf_search
+
+- name: Find the actual pg_hba.conf path (works regardless of installed version)
+  find:
+    paths: /etc/postgresql
+    patterns: pg_hba.conf
+    recurse: true
+  register: pg_hba_search
+
+- name: Listen on all interfaces, not just localhost
+  lineinfile:
+    path: "{{ pg_conf_search.files[0].path }}"
+    regexp: "^#?listen_addresses"
+    line: "listen_addresses = '*'"
+  notify: restart postgresql
+
+- name: Allow password-authenticated connections from the container network
+  lineinfile:
+    path: "{{ pg_hba_search.files[0].path }}"
+    line: "host    all             all             0.0.0.0/0               md5"
+    insertafter: EOF
+  notify: restart postgresql
+
+- name: Flush handlers now so the rest of this role talks to a Postgres that's already listening correctly
+  meta: flush_handlers
+
+- name: Create the application database
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_unix_socket: /var/run/postgresql
+  become: true
+  become_user: postgres
+
+- name: Create the application database user
+  community.postgresql.postgresql_user:
+    name: "{{ db_app_user }}"
+    password: "{{ db_app_password }}"
+    state: present
+    login_unix_socket: /var/run/postgresql
+  become: true
+  become_user: postgres
+
+- name: Grant privileges on application database
+  community.postgresql.postgresql_privs:
+    database: "{{ db_name }}"
+    roles: "{{ db_app_user }}"
+    type: database
+    privs: ALL
+    grant_option: false
+    login_unix_socket: /var/run/postgresql
+  become: true
+  become_user: postgres

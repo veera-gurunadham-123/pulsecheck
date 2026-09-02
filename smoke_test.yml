@@ -1,0 +1,40 @@
+---
+- name: Smoke test - verify PulseCheck stack health
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check each app server's /health endpoint directly
+      uri:
+        url: "http://{{ hostvars[item]['ansible_host'] }}:{{ app_port }}/health"
+        status_code: 200
+        timeout: 5
+      loop: "{{ groups['app'] }}"
+      register: app_health_results
+
+    - name: Check the load balancer's /health endpoint
+      uri:
+        url: "http://{{ hostvars[groups['lb'][0]]['ansible_host'] }}/health"
+        status_code: 200
+        timeout: 5
+      register: lb_health_result
+
+    - name: Check the load balancer's main page returns a valid response
+      uri:
+        url: "http://{{ hostvars[groups['lb'][0]]['ansible_host'] }}/"
+        status_code: 200
+        timeout: 5
+        return_content: true
+      register: lb_index_result
+
+    - name: Fail loudly if the main page doesn't contain expected fields
+      assert:
+        that:
+          - "'hostname' in lb_index_result.json"
+          - "'visit_count' in lb_index_result.json"
+        fail_msg: "Load balancer response is missing expected fields - something is wrong with the app tier"
+        success_msg: "Load balancer response looks correct"
+
+    - name: Summary
+      debug:
+        msg: "All health checks passed: {{ groups['app'] | length }} app server(s), load balancer, and a valid index response."

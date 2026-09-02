@@ -1,0 +1,32 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Remove the default site so it can't conflict with ours
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx
+
+- name: Deploy the load balancer config, with the app tier's real IPs templated in
+  template:
+    src: pulsecheck_lb.conf.j2
+    dest: /etc/nginx/sites-available/pulsecheck.conf
+    mode: '0644'
+  notify: reload nginx
+
+- name: Enable our site
+  file:
+    src: /etc/nginx/sites-available/pulsecheck.conf
+    dest: /etc/nginx/sites-enabled/pulsecheck.conf
+    state: link
+  notify: reload nginx
+
+- name: Ensure nginx is running and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: true

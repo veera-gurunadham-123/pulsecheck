@@ -1,0 +1,21 @@
+---
+- name: Deploy database tier
+  hosts: db
+  become: true
+  tags: [db]
+  roles:
+    - postgres_db
+
+- name: Deploy application tier
+  hosts: app
+  become: true
+  tags: [app]
+  roles:
+    - python_app
+
+- name: Deploy load balancer tier
+  hosts: lb
+  become: true
+  tags: [lb]
+  roles:
+    - nginx_lb

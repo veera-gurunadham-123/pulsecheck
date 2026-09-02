@@ -1,0 +1,19 @@
+upstream pulsecheck_app {
+{% for host in groups['app'] %}
+    server {{ hostvars[host]['ansible_host'] }}:{{ app_port }};
+{% endfor %}
+}
+
+server {
+    listen {{ lb_listen_port }};
+
+    location / {
+        proxy_pass http://pulsecheck_app;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /health {
+        proxy_pass http://pulsecheck_app/health;
+    }
+}

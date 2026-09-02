@@ -1,0 +1,6 @@
+---
+- name: Deploy application tier only
+  hosts: app
+  become: true
+  roles:
+    - python_app

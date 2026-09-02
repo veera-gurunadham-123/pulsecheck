@@ -1,0 +1,16 @@
+[Unit]
+Description=PulseCheck Flask application (gunicorn)
+After=network.target
+
+[Service]
+User=devops
+WorkingDirectory={{ app_dir }}
+Environment="DB_HOST={{ hostvars[groups['db'][0]]['ansible_host'] }}"
+Environment="DB_NAME={{ hostvars[groups['db'][0]]['db_name'] }}"
+Environment="DB_USER={{ hostvars[groups['db'][0]]['db_app_user'] }}"
+Environment="DB_PASSWORD={{ hostvars[groups['db'][0]]['db_app_password'] }}"
+ExecStart={{ app_dir }}/venv/bin/gunicorn --workers {{ gunicorn_workers }} --bind 0.0.0.0:{{ app_port }} app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

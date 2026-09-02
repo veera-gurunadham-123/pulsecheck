@@ -1,0 +1,11 @@
+---
+- name: restart pulsecheck app
+  shell: |
+    pkill -f gunicorn >/dev/null 2>&1 || true
+    cd {{ app_dir }}
+    nohup {{ app_dir }}/venv/bin/gunicorn \
+      --workers {{ gunicorn_workers }} \
+      --bind 0.0.0.0:{{ app_port }} \
+      app:app > /tmp/pulsecheck.log 2>&1 &
+  args:
+    executable: /bin/bash

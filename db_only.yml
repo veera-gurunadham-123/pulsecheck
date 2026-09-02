@@ -1,0 +1,6 @@
+---
+- name: Deploy database tier only
+  hosts: db
+  become: true
+  roles:
+    - postgres_db

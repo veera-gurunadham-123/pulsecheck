@@ -1,0 +1,3 @@
+app_dir: /opt/pulsecheck
+app_service_name: pulsecheck
+gunicorn_workers: 2
