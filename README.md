@@ -69,15 +69,6 @@ Load Balancer:
 ```bash
 curl http://<LB_IP>/
 ```
-### Smoke Test
-
-![Smoke Test](screenshots/s
-### Load Balancer
-
-![Load Balancer](screenshots/load_balancer Service
-
-![Systemots/systemctl_status.png
-
 ## Repository Structure
 
 ```text
