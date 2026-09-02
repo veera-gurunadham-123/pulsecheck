@@ -9,3 +9,5 @@
       app:app > /tmp/pulsecheck.log 2>&1 &
   args:
     executable: /bin/bash
+  async: 30
+  poll: 0

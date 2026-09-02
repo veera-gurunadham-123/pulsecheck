@@ -40,15 +40,16 @@
     dest: "/etc/systemd/system/{{ app_service_name }}.service"
     mode: '0644'
   notify: restart pulsecheck app
+
 - name: Start gunicorn application
   shell: |
     pkill -f gunicorn >/dev/null 2>&1 || true
-    setsid {{ app_dir }}/venv/bin/gunicorn \
+    cd {{ app_dir }}
+    nohup {{ app_dir }}/venv/bin/gunicorn \
       --workers {{ gunicorn_workers }} \
       --bind 0.0.0.0:{{ app_port }} \
-      app:app > /tmp/pulsecheck.log 2>&1 < /dev/null &
+      app:app > /tmp/pulsecheck.log 2>&1 &
   args:
-    chdir: "{{ app_dir }}"
     executable: /bin/bash
   async: 30
   poll: 0

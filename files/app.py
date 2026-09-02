@@ -41,6 +41,7 @@ def index():
         "message": f"Hello from {socket.gethostname()}",
         "hostname": socket.gethostname(),
         "visit_count": count,
+        "version": "1.1",
     })
 
 
