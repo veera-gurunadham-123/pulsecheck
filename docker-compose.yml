@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.node
     hostname: lb
+    container_name: lb
     networks:
       - pulsecheck-net
     labels:
@@ -16,6 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile.node
     hostname: app1
+    container_name: app1
     networks:
       - pulsecheck-net
     labels:
@@ -28,6 +30,7 @@ services:
       context: .
       dockerfile: Dockerfile.node
     hostname: app2
+    container_name: app2
     networks:
       - pulsecheck-net
     labels:
@@ -40,6 +43,7 @@ services:
       context: .
       dockerfile: Dockerfile.node
     hostname: db
+    container_name: db
     networks:
       - pulsecheck-net
     labels:
@@ -49,4 +53,5 @@ services:
 
 networks:
   pulsecheck-net:
+    name: pulsecheck-net
     driver: bridge

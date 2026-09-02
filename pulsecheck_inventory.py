@@ -13,7 +13,7 @@ import json
 import subprocess
 import sys
 
-NETWORK = "pulsecheck_pulsecheck-net"
+NETWORK = "pulsecheck-net"
 
 
 def get_containers():

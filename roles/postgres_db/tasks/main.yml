@@ -1,7 +1,3 @@
-#SPDX-License-Identifier: MIT-0
-
-# tasks file for postgres_db
-#
 ---
 - name: Install PostgreSQL and its Python driver
   apt:
@@ -52,26 +48,13 @@
   community.postgresql.postgresql_db:
     name: "{{ db_name }}"
     state: present
-    login_unix_socket: /var/run/postgresql
-  become: true
   become_user: postgres
 
-- name: Create the application database user
+- name: Create the application database user with full privileges on that database
   community.postgresql.postgresql_user:
     name: "{{ db_app_user }}"
     password: "{{ db_app_password }}"
+    db: "{{ db_name }}"
     state: present
     login_unix_socket: /var/run/postgresql
-  become: true
-  become_user: postgres
-
-- name: Grant privileges on application database
-  community.postgresql.postgresql_privs:
-    database: "{{ db_name }}"
-    roles: "{{ db_app_user }}"
-    type: database
-    privs: ALL
-    grant_option: false
-    login_unix_socket: /var/run/postgresql
-  become: true
   become_user: postgres
